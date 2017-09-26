@@ -1,0 +1,35 @@
+<h3>Blog Posts</h3>
+<div id='divBlogList' class='accPan'>
+<script>
+	
+	function getBlogList() {
+	//  var mimeType = "application/xml";
+	    var mimeType = "text/html";
+	//  var mimeType = "application/json";
+	//  var mimeType = "image/svg+xml";
+		var qs = [jq('widget', objContent.getWidget('divRightAd'))];
+		var es = [je('AdBlogList',qs)];
+		var ajaxQuery =  'content='+escape($.toJSON(jc('zfQ5N7Be',es)));
+	    ajaxReq(ajaxQuery, mimeType);
+	}
+
+	$(document).ajaxSuccess(function(event, xhr, settings) {
+		if (typeof settings.data == 'undefined') {return false;}
+		if (typeof settings.mimeType == 'undefined') {return false;}
+		var query = settings.data;
+	    var mimeType = settings.mimeType;
+	    if (query.match(/zfQ5N7Be/) && query.match(/AdBlogList/)){
+	    	if(mimeType.match(/application\/xml/)){
+	        	}
+	        if(mimeType.match(/text\/html/)){
+	        	$('#divBlogList').prepend(xhr.responseText);
+	            }
+	        if(mimeType.match(/application\/json/)){
+	            }
+	        if(mimeType.match(/image\/svg\+xml/)){
+	           }
+	    }
+	});
+	getBlogList();
+</script>
+</div>

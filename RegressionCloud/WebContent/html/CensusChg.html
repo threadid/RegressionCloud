@@ -1,0 +1,251 @@
+<script type="text/javascript" src="ScriptLibrary/CensusChg.js"></script>
+<script type="text/javascript">
+
+var objCensusChgVisual = classDrawVisual();
+var objCensusChgSummary = classChgSummary();
+
+$('#censusTabs').on("tabsactivate", function( event, ui ) {
+	if (ui.newPanel.attr('id')==='tabCensusChg'){
+    	if (typeof objCensusChgVisual.getPopDataTable() === 'undefined') {
+    		initTabCensusChg();
+      }   
+    }
+} );
+
+function initTabCensusChg(){	
+	var dd = $("#selChgFact option:selected").val(); 
+	var pys = $( "#chgYearSpinner" ).spinner();	
+	pys.spinner({ icons: { down: "ui-icon-triangle-1-s", up: "ui-icon-triangle-1-n" } });
+	pys.spinner("option", "step", 1);
+	pys.spinner("option", "max", parseInt(objCensusYears.maxYear(dd), 10));
+	pys.spinner("option", "min", parseInt(objCensusYears.minYear(dd), 10));
+	pys.spinner("value", parseInt(objCensusYears.maxYear(dd), 10));
+	pys.spinner({stop: function( event, ui ) 
+				{	var sv = $( "#chgYearSpinner" ).spinner("value");
+					var ds = $("#selChgFact option:selected").val();
+					if (sv.toString().length >= 4) {
+						if (sv >= objCensusYears.minYear(ds) &&
+							sv <= objCensusYears.maxYear(ds)) {
+						} else {
+							$( "#chgYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(ds), 10));
+						}
+						selectViewChg();
+					}
+	        	}});
+	
+	$( "#cysLabel" ).text('Census Years ' + objCensusYears.minYear(dd) + ' - ' + objCensusYears.maxYear(dd));
+
+	$( "#chgTools" ).draggable({scroll: true, scrollSensitivity: 100, cursor: "crosshair", delay: 100 });
+	
+	if (typeof objCensusChgVisual.getPopDataTable() === 'undefined') {
+    	getChgImgs();
+    	} 
+}
+
+function getChgImgs(){
+    var mimeType = "image/svg+xml";
+    var qs = [jq('Resource', 'Blank_US_Map_With_Labels_Simple_Data.svg')];
+    var es = [je('chgUSMap_div',qs)];
+    var ajaxQuery =  'content='+escape($.toJSON(jc('W2Y7N6U3',es)));
+	ajaxReq(ajaxQuery, mimeType);
+}
+
+function getChgCensus(){
+//        var mimeType = "application/xml";
+//        var mimeType = "text/html";
+	var mimeType = "application/json";
+//      var mimeType = "image/svg+xml";
+	var cd =  $( "#chgYearSpinner" ).spinner( "value" );
+	var fd = cd;
+	var td = cd;
+	var qs = [jq('FromDate', fd),jq('ToDate', td)];
+	var es = [je('tabCensusChg',qs)];
+	var ajaxQuery =  'content='+escape($.toJSON(jc('W2Y7N6U3',es)));
+	ajaxReq(ajaxQuery, mimeType);
+}
+
+$(document).ajaxSuccess(function(event, xhr, settings) {
+	if (typeof settings.data == 'undefined') {return false;}
+	if (typeof settings.mimeType == 'undefined') {return false;}
+	var query = settings.data;
+    var mimeType = settings.mimeType;
+    if (query.match(/W2Y7N6U3/)){
+    	if(mimeType.match(/application\/xml/)){
+        	}
+        if(mimeType.match(/text\/html/)){
+            }
+        if(mimeType.match(/application\/json/)){
+            var jsonChartData = $.parseJSON(xhr.responseText);
+            objCensusChgVisual.setPopDataTable(jsonChartData);
+            objCensusChgVisual.setPopFact($( "#selChgFact" ).val());
+            objCensusChgVisual.setPopFactYear(jsonChartData.rows[0].c[2].v);
+    		objCensusChgSummary.getSummary(
+    				objCensusChgVisual.getPopDataTable(),
+    				objCensusChgVisual.getPopFact(),					
+					objCensusChgVisual.getPopFactLabel(),					
+    				objCensusChgVisual.getPopFactCol(),					
+    				objCensusChgVisual.getPopFactYear());
+    		objCensusChgSummary.drawSummary('chgSum');
+            objCensusChgVisual.PaintMapUS('chgUSMap_div');
+            objCensusChgVisual.drawCombChart('chgColChart_div');
+            objCensusChgVisual.drawHistogram('chgHistColChart_div', 21);
+            objCensusChgVisual.drawParamTab('chgParamTblChart_div');
+            objCensusChgVisual.drawTabData('chgTblChart_div');
+            }
+        if(mimeType.match(/image\/svg\+xml/)){
+        	var xmlSVG = xhr.responseXML;
+            objCensusChgVisual.inLineSVG('chgUSMap_div', xmlSVG)
+        	getChgCensus();
+            }
+    }
+});
+
+function syncChg(){
+	var yr = $( "#chgYearSpinner" ).spinner( "value" );
+	var ds = $("#selChgFact option:selected").val();
+	$( "#chgYearSpinner" ).spinner("option", "max", parseInt(objCensusYears.maxYear(ds), 10));
+	$( "#chgYearSpinner" ).spinner("option", "min", parseInt(objCensusYears.minYear(ds), 10));
+	if (yr >= objCensusYears.minYear(ds) &&
+		yr <= objCensusYears.maxYear(ds)) {
+	} else {
+		$( "#chgYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(ds), 10));
+	}
+	$( "#cysLabel" ).text('Census Years ' + objCensusYears.minYear(ds) + ' - ' + objCensusYears.maxYear(ds));
+	selectViewChg();
+}
+
+function selectViewChg() {
+	var yr = $( "#chgYearSpinner" ).spinner( "value" );
+	var ds = $("#selChgFact option:selected").val();
+	if (objCensusChgVisual.hasYear(yr)){
+		objCensusChgVisual.setPopFactYear(yr);
+	    objCensusChgVisual.setPopFact(ds);
+		objCensusChgSummary.getSummary(
+				objCensusChgVisual.getPopDataTable(),
+				objCensusChgVisual.getPopFact(),					
+				objCensusChgVisual.getPopFactLabel(),					
+				objCensusChgVisual.getPopFactCol(),					
+				objCensusChgVisual.getPopFactYear());
+		objCensusChgSummary.drawSummary('chgSum');
+		objCensusChgVisual.PaintMapUS('chgUSMap_div');
+	    objCensusChgVisual.drawCombChart('chgColChart_div');
+	    objCensusChgVisual.drawHistogram('chgHistColChart_div', 21);
+	    objCensusChgVisual.drawParamTab('chgParamTblChart_div');
+	    objCensusChgVisual.drawTabData('chgTblChart_div');
+	} else {
+		getChgCensus();		
+	}
+}
+</script>
+<div style="height: 100%; width: 775px">
+<p>
+<h1><span id='chgTabTitle'><span class='factName'></span> for The United States <span class='factYear'></span></span></h1>
+</p>
+<hr>
+<p>
+<h3>
+There are three factors that cause the overall population level of The United States to change: Births, Deaths, and International Migration.  There is a fourth factor that causes the overall level of population for a given state to change:  Domestic Migration.  By definition, Domestic Migration is a net zero sum factor at the national level. In other words, some states are gaining population while other states are losing that same population.  Therefore the mean is always zero. The four factors divide up into two separate categories:  Net Natural Changes and Net Migration.  All four factors combine together to equal the Net Population Change for each individual state.
+</h3>
+</p>
+<hr>
+<p>
+<a href="#" onclick="$( '#chgTools' ).css('left','0px');$( '#chgTools' ).css('top','0px');return false;">
+<img src='images/revButt_EEEEEE.png' alt='Return' title='Return Controls' style="position: absolute; left: 770px"/></a>
+<div id='chgTools' class='cToolBox' style='width: 300px; height: 120px;' title='Drag Me!'>
+<div class='cTBoxBar'>
+<span class="title">Controls</span>
+<a href="#" onclick="$( '#chgTools' ).css('left','0px');$( '#chgTools' ).css('top','0px');return false;">
+<img src='images/revButt_000066.png' alt='Return Control' title='Return Controls' style="position: absolute; left: 275px"/></a>
+</div>
+<div class='content'>
+<label id='cysLabel' for='chgYearSpinner' class='tbControl'></label>
+<input id='chgYearSpinner' class='tbControl'></input>
+<p>
+<select ID="selChgFact" onchange="syncChg();return false;" class='tbControl'>
+  <option value="npopchg" selected="selected">Net Population Change</option>
+  <option value="natchg">Net Natural Change</option>
+  <option value="births">Births</option>
+  <option value="deaths">Deaths</option>
+  <option value="netmig">Net Migration Change</option>
+  <option value="intmig">International Migration</option>
+  <option value="dommig">Domestic Migration</option>
+</select> 
+</p>
+</div>
+</div>
+</p>
+<div class='cTBar'>
+<span class="chgSum_div title">Observations about <span class='factName'></span> for the United States <span class='factYear'></span></span>
+<a href="#" onclick="minMaxButt('chgSum_div');return false;">
+<img class="chgSum_div butt" src='images/minButt.png'  style="position: absolute; left: 770px"/></a>
+</div>
+<div class='chgSum_div hide'>
+<article id='chgSum' class='factart'>
+<p>
+<ul class='cList'>
+<li><span class='factName'></span> for the United States: <span class='fsum ffact'></span></li>
+<li>State with the <span class='fmaxdesc'></span> from <span class='factName'></span>: <span class='fmaxst ffact'></span>, <span class='fmax ffact'></span></li>
+<li>State with the <span class='fmindesc'></span> from <span class='factName'></span>: <span class='fminst ffact'></span>, <span class='fmin ffact'></span></li>
+<li>Median <span class='factName'></span>: <span class='fmed ffact'></span></li>
+<li>Mean <span class='factName'></span>: <span class='fmean ffact'></span></li>
+</ul>
+<div class='factDecomp' style='padding-left:50px'>
+<table class='cXTab'>
+<tr>
+<td colspan='2' class='cXTTopLeft'>Breakdown of Net Population Change for the United States: </td>
+</tr>
+<tr>
+<td class='cXTRowLab'>Births for the United States </td>
+<td><span class='fbirth ffact'></span></td>
+</tr>
+<tr>
+<td class='cXTRowLab'>Deaths for the United States </td>
+<td><span class='ffact'>-</span><span class='fdeath ffact'></span></td>
+</tr>
+<tr>
+<td class='cXTRowLab'>Net Migration for the United States </td>
+<td><span class='fnetmig ffact'></span></td>
+</tr>
+<tr>
+<td class='cXTRowLab'>Net Population Change for the United States </td>
+<td ><span class='fnetchg ffact' style='text-decoration:overline'></span></td>
+</tr>
+</table>
+</div>
+</p>
+</article>
+</div>
+<div class='cTBar'>
+<span class="chgUSMap_div title"></span>
+<a href="#" onclick="minMaxButt('chgUSMap_div');objCensusChgVisual.PaintMapUS('chgUSMap_div');return false;">
+<img class="chgUSMap_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='chgUSMap_div hide'>
+    <div id="chgUSMap_div" class="cIG" style="height: 500px; width: 750px"></div>
+</div>
+<div class='cTBar'>
+<span class="chgColChart_div title" style="text-align:right"></span>
+<a href="#" onclick="minMaxButt('chgColChart_div');objCensusChgVisual.drawCombChart('chgColChart_div');return false;">
+<img class="chgColChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='chgColChart_div hide'>
+    <div id="chgColChart_div" class="cIG" style="height: 400px; width: 750px"></div>
+</div>
+<div class='cTBar'>
+<span class="chgHistColChart_div title"></span>
+<a href="#" onclick="minMaxButt('chgHistColChart_div');objCensusChgVisual.drawHistogram('chgHistColChart_div', 21);objCensusChgVisual.drawParamTab('chgParamTblChart_div');return false;">
+<img class="chgHistColChart_div chgParamTblChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='chgHistColChart_div chgParamTblChart_div hide' style="height: 300px; width: 750px">
+    <div id="chgHistColChart_div" class="cIG" style="height: 100%; width: 430px; float: left"></div>
+    <div id="chgParamTblChart_div" class="cIG" style="height: 100%; width: 300px; float: left; margin-left: 10px"></div>
+</div>
+<div class='cTBar'>
+<span class="chgTblChart_div title"></span>
+<a href="#" onclick="minMaxButt('chgTblChart_div');objCensusChgVisual.drawTabData('chgTblChart_div');return false;">
+<img class="chgTblChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='chgTblChart_div hide'>
+    <div id="chgTblChart_div" class="cIG" style="height: 300px; width: 750px;"></div>
+</div>
+</div>

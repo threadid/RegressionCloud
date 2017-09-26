@@ -1,0 +1,708 @@
+/*
+*   Common Styles
+*
+*/
+
+HTML
+{
+    HEIGHT: 100%;
+}
+
+BODY
+{
+    BACKGROUND-COLOR: #transparent;
+    FONT-FAMILY: Tahoma, Arial, Helvetica, sans-serif;
+    FONT-SIZE: 69%;
+    FONT-WEIGHT: normal;
+    LETTER-SPACING: normal;
+    TEXT-TRANSFORM: none;
+    WORD-SPACING: normal;
+    HEIGHT: 100%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+HR {
+	WIDTH: 95%;
+	HEIGHT: 1px;
+	BORDER-STYLE: solid;
+    BORDER-WIDTH: .5px;
+    BORDER-COLOR: #D5D9DE;
+	BACKGROUND-COLOR: #D5D9DE;
+	FLOAT: center;
+}
+
+HR.vr {
+	WIDTH: 1px;
+	HEIGHT: 0px;
+	BORDER-STYLE: solid;
+    BORDER-WIDTH: .5px;
+    BORDER-COLOR: #D5D9DE;
+	BACKGROUND-COLOR: #D5D9DE;
+	FLOAT: left;
+}
+
+HR.dash {
+	WIDTH: 95%;
+	HEIGHT: 1px;
+	BORDER-STYLE: dashed;
+    BORDER-WIDTH: .5px;
+    BORDER-COLOR: #D5D9DE;
+	BACKGROUND-COLOR: #transparent;
+	FLOAT: center;
+}
+
+HR.section {
+	WIDTH: 95%;
+	HEIGHT: 3px;
+	BORDER-STYLE: solid;
+    BORDER-WIDTH: .5px;
+    BORDER-COLOR: #000066;
+	BACKGROUND-COLOR: #000066;
+	FLOAT: center;
+}
+
+P {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: normal;
+	COLOR: black;
+	TEXT-DECORATION: none;
+}
+
+P.blog
+ {
+	FONT-WEIGHT: normal;
+    FONT-SIZE: 1.2em;
+    FONT-STYLE: normal;
+	COLOR: black;
+	TEXT-DECORATION: none;
+	line-height: 24px;
+}
+
+ARTICLE.factart
+{   
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: normal;
+    FONT-FAMILY: Arial, Sans-Serif;
+}
+
+H3 {
+	FONT-WEIGHT: bold;
+	FONT-SIZE: 1.3em;
+	COLOR: #333385;
+	TEXT-DECORATION: none;
+}
+
+H2 {
+	FONT-WEIGHT: bold;
+	FONT-SIZE: 1.5em;
+	COLOR: #000066;
+	TEXT-DECORATION: none;
+}
+
+H1 {
+	FONT-WEIGHT: 900;
+	FONT-SIZE: 1.7em;
+	COLOR: #000052;
+	TEXT-DECORATION: none;
+}
+
+ul.cList {
+    WIDTH: 700px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: normal;
+	LIST-STYLE-TYPE: square;
+	COLOR: black;
+	TEXT-DECORATION: none;
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: #FFFFEB;
+}
+
+ul.cLabelList {
+    WIDTH: 700px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: normal;
+	LIST-STYLE-TYPE: none;
+	COLOR: black;
+	TEXT-DECORATION: none;
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: #FFFFEB;
+}
+
+.cLabelList li {
+	position: relative;
+}
+
+.cLabelList li span {
+	position: absolute;
+	left: 300px;
+}
+
+ul.cCatList {
+    WIDTH: 700px;
+	LIST-STYLE-TYPE: none;
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: #FFFFEB;
+}
+
+ul.cCatList li {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: normal;
+	COLOR: black;
+	TEXT-DECORATION: none;
+}
+
+ul.cCatList li span {
+    FONT-WEIGHT: normal;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: normal;
+	COLOR: black;
+	TEXT-DECORATION: none;
+}
+
+/*.cCatList li {
+	position: relative;
+}*/
+
+/*.cCatList li span {
+	position: absolute;
+	left: 150px;
+}*/
+
+ul.cURIList {
+    WIDTH: 325px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: normal;
+	LIST-STYLE-TYPE: none;
+	COLOR: black;
+	TEXT-DECORATION: none;
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: #FFFFEB;
+}
+
+/*.cURIList li {
+	position: relative;
+}*/
+
+/*.cURIList li span {
+	position: absolute;
+	left: 150px;
+}*/
+
+div
+{
+    BORDER-LEFT-WIDTH: 0px;
+    BORDER-RIGHT-WIDTH: 0px;
+    BORDER-TOP-WIDTH: 0px;
+    BORDER-BOTTOM-WIDTH: 0px;
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+}
+
+div.cBanner
+{
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: transparent;
+    OVERFLOW-Y: visible;
+}
+
+div.cawmAnchor-rcMenuBar
+{
+    BACKGROUND-COLOR: #000066;
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+}
+
+div.cCenter
+{
+    BACKGROUND-COLOR: #fff;
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+}
+
+div.cAdSpace
+{
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: transparent;
+}
+
+div.cLeftNav
+{
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: transparent;
+}
+
+div.cMain
+{
+	BACKGROUND-COLOR: transparent;
+}
+
+div.cRightAd
+{
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: transparent;
+}
+
+div.cFooter
+{
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: 0px;
+    BORDER-COLOR: black;
+	BACKGROUND-COLOR: transparent;
+    OVERFLOW-Y:auto;
+}
+
+div.cChart
+{
+    BORDER-STYLE: solid;
+    BORDER-WIDTH: medium;
+    BORDER-COLOR: black;
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+}
+
+div.cIG
+{
+    BORDER-STYLE: none;
+    BORDER-WIDTH: none;
+    BORDER-COLOR: none;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: #FFFFEB;
+    }
+
+div.content
+{
+    PADDING-RIGHT: 10px;
+    PADDING-LEFT: 10px;
+    PADDING-TOP: 10px;
+    PADDING-BOTTOM: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: #FFFFEB;
+    
+    FONT-SIZE: 1em;
+    COLOR: black;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: normal;    
+}
+
+div.blogpost
+{
+    PADDING-RIGHT: 10px;
+    PADDING-LEFT: 10px;
+    PADDING-TOP: 10px;
+    PADDING-BOTTOM: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: transparent;
+    
+    FONT-SIZE: 1.1em;
+    COLOR: black;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: normal;    
+}
+
+div.reference
+{
+    PADDING-RIGHT: 10px;
+    PADDING-LEFT: 10px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: transparent;
+    
+    FONT-SIZE: 1em;
+    COLOR: black;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: normal;    
+}
+
+div.cToolBox
+{
+	BORDER-LEFT-WIDTH: 6px;
+    BORDER-RIGHT-WIDTH: 6px;
+    BORDER-TOP-WIDTH: 1px;
+    BORDER-BOTTOM-WIDTH: 6px;
+	BORDER-STYLE: solid;
+    BORDER-COLOR: #000066;
+    border-radius: 5px; 
+	PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: #FFFFEB;
+    
+    z-index: 1500;
+}
+
+div.cTBoxBar
+{
+    PADDING-RIGHT: 1px;
+    PADDING-LEFT: auto;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: #000066;
+    
+    position: relative;
+    
+    Height: 1.5em;
+    FONT-SIZE: 1.1em;
+    COLOR: white;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;    
+}
+
+div.cTBar
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 20px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: #000066;
+    
+    Height: 1.5em;
+    FONT-SIZE: 1.1em;
+    COLOR: white;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;    
+}
+
+div.logo
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: none;
+}
+
+div#blog div.isOverflowHidden
+{
+	overflow: hidden;
+}
+
+div#adAcc div.isOverflowHidden
+{
+	overflow: hidden;
+}
+
+div.source
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 20px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    background: grey;
+    
+    Height: 1.5em;
+    FONT-SIZE: 1.1em;
+    COLOR: white;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;    
+}
+
+table
+{
+    BORDER-COLLAPSE: collapse;
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+}
+
+table.footie td
+{
+    BORDER-COLLAPSE: collapse;
+    PADDING-RIGHT: 10px;
+    PADDING-LEFT: 10px;
+    PADDING-TOP: 5px;
+    PADDING-BOTTOM: 5px;
+}
+
+table.cXTab
+{
+    BORDER-COLLAPSE: collapse;
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    
+	background: #FFFFEB;
+	text-align: center;
+}
+
+td.cXTTopLeft
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+	
+	background: #000066;
+	
+    FONT-SIZE: 1.1em;
+    COLOR: white;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;    
+	
+	text-align: center;
+	
+}
+
+td.cXTColLab
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 20px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+	background: #7486E1;
+    FONT-SIZE: 1.1em;
+    FONT-WEIGHT: bold;    
+	text-align: left;
+    COLOR: black;
+}
+
+td.cXTRowLab
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 20px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+	background: #A8B6FF;
+    FONT-SIZE: 1.1em;
+    FONT-WEIGHT: bold;    
+	text-align: right;
+    COLOR: black;
+}
+input[type='button'].cButt
+{
+    MARGIN: 0px;
+    PADDING-RIGHT: 1px;
+    PADDING-LEFT: 1px;
+    PADDING-TOP: 1px;
+    PADDING-BOTTOM: 1px;
+	Height: 1.6em;
+    FONT-SIZE: 1em;
+    FONT-WEIGHT: bold;
+}
+
+input[type='text'].cTxt
+{
+	BORDER-LEFT-WIDTH: 1px;
+    BORDER-RIGHT-WIDTH: 1px;
+    BORDER-TOP-WIDTH: 1px;
+    BORDER-BOTTOM-WIDTH: 1px;
+    BORDER-STYLE: solid;
+    BORDER-COLOR: black;
+    background: purple;
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+
+    Height: 1.5em;
+    FONT-SIZE: 1em;
+    COLOR: red;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;
+}
+
+input.tbControl
+{
+    BORDER-WIDTH: 0px;
+    BORDER-STYLE: solid;
+    BORDER-COLOR: #000066;
+    background: white;
+    MARGIN: 0px;
+    PADDING-RIGHT: 10px;
+    PADDING-LEFT: 10px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+
+    height: 1.5em;
+    width: 50px;
+    FONT-SIZE: 1em;
+    COLOR: black;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;
+}
+
+select.tbControl
+{
+    BORDER-WIDTH: 1px;
+    BORDER-STYLE: solid;
+    BORDER-COLOR: #E0E0E0;
+    background: white;
+    MARGIN: 0px;
+    PADDING-RIGHT: 10px;
+    PADDING-LEFT: 10px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+
+    height: 1.5em;
+    FONT-SIZE: 1em;
+    COLOR: black;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;
+}
+
+label.tbControl
+{
+	Height: 1.5em;
+    FONT-SIZE: 1em;
+    COLOR: #000066;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;
+	
+}
+
+div#blogpost span.bline .bdate
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: .5em;
+    COLOR: #000066;
+    TEXT-DECORATION: none;
+}
+
+span.ffact
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 1.1em;
+    FONT-STYLE: italic;
+    COLOR: #000066;
+    TEXT-DECORATION: none;
+}
+
+span.bLab
+{
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    
+    FONT-SIZE: 1em;
+    COLOR: #000066;
+    TEXT-DECORATION: none;
+    FONT-WEIGHT: bold;
+}
+
+span.source
+{
+    MARGIN: 0px;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-TOP: 0px;
+    PADDING-BOTTOM: 0px;
+    
+    FONT-SIZE: 1em;
+    COLOR: #000066;
+    TEXT-DECORATION: italic;
+    FONT-WEIGHT: bold;
+}
+
+span.footie
+{
+        FONT-SIZE: 12px;
+}
+
+.chartTabRow
+{
+	background: #FFFFEB;
+}
+
+.chartHeadRow
+{
+	background: #A8B6FF;
+    FONT-WEIGHT: bold;
+}
+
+.isHidden
+{
+	display: none;
+}

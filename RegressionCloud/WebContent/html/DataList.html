@@ -1,0 +1,128 @@
+<h3>Data Catalog</h3>
+<div id='divDataList' class='accPan'>
+<div id='datalog' title='Select Data Series'>
+<form action="#" class="cMeta">
+	<div id="seriesKeys" class="cMeta"></div>
+	<div id="seriesMeta" class="cMeta"></div>
+	<div id="seriesRange" class="cMeta"></div>
+</form>
+</div>
+<script>
+	var objSeriesMeta = classSelData();
+	
+	$(function() {
+		$( '#datalog' ).dialog({ autoOpen: false });
+		$( '#datalog' ).dialog( 'option', 'shadow', true );
+		$( '#datalog' ).dialog( 'option', 'title', '' );
+		$( '#datalog' ).dialog( 'option', 'width', 'auto' );
+	});
+	
+	function showKeys(series, sname) {
+		$( '#datalog' ).dialog( 'close' );
+		$( '#datalog' ).dialog( 'option', 'title', sname );
+		if (objSeriesMeta.hasSeriesMeta(series)) {
+			$('#seriesKeys').html(objSeriesMeta.seriesKeys(series));
+			$('#seriesMeta').html(objSeriesMeta.seriesMeta(series, $('#seriesKeys option:first').val()));
+			showRange(series, $('#seriesKeys option:first').val());
+			$( '#datalog' ).dialog( 'open' );
+		} else {
+			getSelDataMeta(series);
+		}
+	}
+	
+	function showMeta(series, cname) {
+		$('#seriesMeta').html(objSeriesMeta.seriesMeta(series, cname));
+		showRange(series, cname);
+	}
+	
+	function showRange(series, cname) {
+		if (objSeriesMeta.hasSeriesRange(series, cname)) {
+			$('#seriesRange').html(objSeriesMeta.seriesRange(series, cname));
+		} else {
+			getSelDataRange(series, cname);
+		}
+	}
+	
+	function getDataList() {
+	//  var mimeType = "application/xml";
+	    var mimeType = "text/html";
+	//  var mimeType = "application/json";
+	//  var mimeType = "image/svg+xml";
+		var qs = [jq('', '')];
+		var es = [je('AdDataCat',qs)];
+		var ajaxQuery =  'content='+escape($.toJSON(jc('DfYfZ6Q1',es)));
+		ajaxReq(ajaxQuery, mimeType);
+	}
+
+	function getSelDataMeta(series){
+		//  var mimeType = "application/xml";
+		//  var mimeType = "text/html";
+		    var mimeType = "application/json";
+		//  var mimeType = "image/svg+xml";
+			var qs = [jq('series', series)];
+			var es = [je('selDataMeta',qs)];
+		    var ajaxQuery =  'content='+escape($.toJSON(jc('z6V2M1h4',es)));
+		    ajaxReq(ajaxQuery, mimeType);
+		}
+	
+	function getSelDataRange(series, cname){
+		//  var mimeType = "application/xml";
+		//  var mimeType = "text/html";
+		    var mimeType = "application/json";
+		//  var mimeType = "image/svg+xml";
+			var qs = [jq('series', series),jq('cname', cname)];
+			var es = [je('selDataRange',qs)];
+		    var ajaxQuery =  'content='+escape($.toJSON(jc('z6V2M1h4',es)));
+		    ajaxReq(ajaxQuery, mimeType);
+		}
+	
+	$(document).ajaxSuccess(function(event, xhr, settings) {
+		if (typeof settings.data == 'undefined') {return false;}
+		if (typeof settings.mimeType == 'undefined') {return false;}
+		var query = settings.data;
+	    var mimeType = settings.mimeType;
+	    if (query.match(/DfYfZ6Q1/) && query.match(/AdDataCat/)){
+	    	if(mimeType.match(/application\/xml/)){
+	        	}
+	        if(mimeType.match(/text\/html/)){
+	        	$('#divDataList').prepend(xhr.responseText);
+	            }
+	        if(mimeType.match(/application\/json/)){
+	            }
+	        if(mimeType.match(/image\/svg\+xml/)){
+	           }
+	    }
+	    if (query.match(/z6V2M1h4/) && query.match(/selDataMeta/)){
+	    	if(mimeType.match(/application\/xml/)){
+	        	}
+	        if(mimeType.match(/text\/html/)){
+	            }
+	        if(mimeType.match(/application\/json/)){
+	        	var jsonChartData = $.parseJSON(xhr.responseText);
+	        	objSeriesMeta.setMeta(jsonChartData);
+	        	$('#seriesKeys').html(objSeriesMeta.seriesKeys(jsonChartData.meta.series));
+	        	$('#seriesMeta').html(objSeriesMeta.seriesMeta(jsonChartData.meta.series, $('#seriesKeys option:first').val()));
+				showRange(jsonChartData.meta.series, $('#seriesKeys option:first').val());
+	        	$('#datalog').dialog('open');
+	            }
+	        if(mimeType.match(/image\/svg\+xml/)){
+	           }
+	    }
+	    if (query.match(/z6V2M1h4/) && query.match(/selDataRange/)){
+	    	if(mimeType.match(/application\/xml/)){
+	        	}
+	        if(mimeType.match(/text\/html/)){
+	            }
+	        if(mimeType.match(/application\/json/)){
+	        	var jsonChartData = $.parseJSON(xhr.responseText);
+	        	objSeriesMeta.setRange(jsonChartData);
+	        	$('#seriesRange').html(objSeriesMeta.seriesRange(jsonChartData.range.series, $('#seriesKeys option:selected').val()));
+	            }
+	        if(mimeType.match(/image\/svg\+xml/)){
+	           }
+	    }
+	});
+	getDataList();
+</script>
+</div>
+

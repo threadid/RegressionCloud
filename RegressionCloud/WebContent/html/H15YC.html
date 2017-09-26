@@ -1,0 +1,118 @@
+<p>
+<script type="text/javascript">
+$(function() {
+  $( "button.yccButt" )
+    .button()
+});
+
+var objYCChart = classTreasuryYieldCurveChart();
+
+$('#H15Tabs').on("tabsactivate", function( event, ui ) {
+    if (ui.newPanel.attr('id')==='tabH15YC'){
+        if (typeof objYCChart.getWeekJSON() === 'undefined') {
+        	loadYieldCurve('b', 100);
+        }   
+    }
+} );
+
+function loadYieldCurve(freq, od){
+//		var mimeType = "application/xml";
+//		var mimeType = "text/html";
+		var mimeType = "application/json";
+//		var mimeType = "image/svg+xml";
+		var cd = new Date();
+		var fd = cd.getFullYear()-od;
+		var td = cd.getFullYear()+1;
+		var qs = [jq('freq', freq),jq('fromdate', fd),jq('todate', td)];
+		var es = [je('tabH15YC',qs)];
+		var ajaxQuery =  'content='+escape($.toJSON(jc('jcYdZ3R9',es)));
+		ajaxReq(ajaxQuery, mimeType);
+}
+
+$(document).ajaxSuccess(function(event, xhr, settings) {
+	if (typeof settings.data == 'undefined') {return false;}
+	if (typeof settings.mimeType == 'undefined') {return false;}
+    var query = settings.data;
+	var jsonQuery = $.parseJSON(decodeURIComponent(query.replace('content=','')));
+    var mimeType = settings.mimeType;
+    if (query.match(/jcYdZ3R9/) && query.match(/tabH15YC/)){
+    	if(mimeType.match(/application\/xml/)){
+        	}
+        if(mimeType.match(/text\/html/)){
+            }
+        if(mimeType.match(/application\/json/)){
+        	var objContent = contentJSONClass();
+        	objContent.setContent(jsonQuery);
+        	var freq = objContent.getKey('tabH15YC','freq');
+            var jsonChartData = $.parseJSON(xhr.responseText);
+			if (freq == 'w') {
+				objYCChart.setWeekJSON(jsonChartData);
+				}
+			if (freq == 'b') {
+				loadYieldCurve('w', 100);
+				objYCChart.setBusDayJSON(jsonChartData);
+				var cd = new Date();
+				var fd = cd.getFullYear()-1;
+				var td = cd.getFullYear()+1;
+				objYCChart.DrawTreasDB(fd, td);
+				}
+            }
+        if(mimeType.match(/image\/svg\+xml/)){
+            }
+    }
+});
+</script>
+<p>
+<h1><span>U.S. Government Securities - Treasury Constant Maturities - H.15 </span></h1>
+</p>
+<hr>
+<p>
+<h2>
+Yield Curve Analysis
+</h2>
+</p>
+<hr>
+<div style="height: 500px; width: 800px">
+<table>
+<tr>
+<td>
+<span id="trsSDtLab" class="ffact"></span>
+<span class="ffact"> - </span>
+<span id="trsEDtLab" class="ffact"></span>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+	<form id="selYC" action="write" method="post">
+		<button type="button" class="yccButt" onclick="objYCChart.SeekFirst();return false;" title="Shift Range First Year"><span class="ui-icon ui-icon-seek-first" style="display:inline-block"></span></button>
+		<button type="button" class="yccButt" onclick="objYCChart.SeekNext(-1);return false;" title="Shift Range Previous"><span class="ui-icon ui-icon-seek-prev" style="display:inline-block"></span></button>
+		<button type="button" class="yccButt" onclick="objYCChart.SeekRange(1);return false;" title="1 Year">1YR</button>
+		<button type="button" class="yccButt" onclick="objYCChart.SeekRange(2);return false;" title="2 Years">2YR</button>
+		<button type="button" class="yccButt" onclick="objYCChart.SeekRange(3);return false;" title="3 Years">3YR</button>
+		<button type="button" class="yccButt" onclick="objYCChart.SeekRange(5);return false;" title="5 Years">5YR</button>
+		<button type="button" class="yccButt" onclick="objYCChart.SeekNext(1);return false;" title="Shift Range Next"><span class="ui-icon ui-icon-seek-next" style="display:inline-block"></span></button>
+		<button type="button" class="yccButt" onclick="objYCChart.SeekLast();return false;" title="Shfit Range Last Year"><span class="ui-icon ui-icon-seek-end" style="display:inline-block"></span></button>
+	</form>
+</div>
+</td>
+<td>
+<button type="button" id="ycAnim" class="yccButt" onclick="objYCChart.ycAnimToggle();return false;" title="Play Yield Curve Animation"><span class="ui-icon ui-icon-play" style="display:inline-block"></span></button>
+</td>
+</tr>
+<tr>
+<td>
+    <div id="h15DashBoard_div" class="cIG">
+        <div id="h15Chrt_div" style="height: 410px; width: 425px;"></div>
+        <div id="h15Ctrl_div" style="height: 40px; width: 425px;"></div>
+    </div>
+</td>
+<td>
+    <div id="ycChrt_div" class="cIG" style="height: 450px; width: 320px">ycChrt_div</div>
+</td>
+</tr>
+</table>
+</div>
+</p>  

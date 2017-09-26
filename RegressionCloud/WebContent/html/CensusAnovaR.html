@@ -1,0 +1,333 @@
+
+<script type="text/javascript" src="ScriptLibrary/CensusAnovaR.js"></script>
+<script type="text/javascript">
+
+var objCensusAnovaR = classAnovaR();
+
+$('#statTabs').on("tabsactivate", function( event, ui ) {
+	if (ui.newPanel.attr('id')=='tabCensusAnovaR'){
+        if (typeof objCensusAnovaR.getAnovaDataTable() == 'undefined' ||
+        	typeof objCensusAnovaR.getRegrDataTable() == 'undefined') {
+            initTabCensusAnovaR();
+        } 
+    }
+} );
+
+function initTabCensusAnovaR(){
+	var ydd = $("#selYFactR option:selected").val(); 
+	var yys = $( "#anovaRYYearSpinner" ).spinner();	
+	yys.spinner({ icons: { down: "ui-icon-triangle-1-s", up: "ui-icon-triangle-1-n" } });
+	yys.spinner("option", "step", 1);
+	yys.spinner("option", "max", parseInt(objCensusYears.maxYear(ydd), 10));
+	yys.spinner("option", "min", parseInt(objCensusYears.minYear(ydd), 10));
+	yys.spinner("value", parseInt(objCensusYears.maxYear(ydd), 10));
+	yys.spinner({stop: function( event, ui ) 
+				{	var ysv = $( "#anovaRYYearSpinner" ).spinner("value");
+					var yds = $("#selYFactR option:selected").val(); 
+					if (ysv.toString().length >= 4) {
+						if (ysv >= objCensusYears.minYear(yds) &&
+							ysv <= objCensusYears.maxYear(yds)) {
+						} else {
+							$( "#anovaRYYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(yds), 10));
+						}
+					}
+				}});
+	$( "#aysYLabelR" ).text('   Years ' + objCensusYears.minYear(ydd) + ' - ' + objCensusYears.maxYear(ydd));
+
+	var xdd = $("#selXFactR option:selected").val(); 
+	var xys = $( "#anovaRXYearSpinner" ).spinner();	
+	xys.spinner({ icons: { down: "ui-icon-triangle-1-s", up: "ui-icon-triangle-1-n" } });
+	xys.spinner("option", "step", 1);
+	xys.spinner("option", "max", parseInt(objCensusYears.maxYear(xdd), 10));
+	xys.spinner("option", "min", parseInt(objCensusYears.minYear(xdd), 10));
+	xys.spinner("value", parseInt(objCensusYears.maxYear(xdd), 10));
+	xys.spinner({stop: function( event, ui ) 
+				{	var xsv = $( "#anovaRXYearSpinner" ).spinner("value");
+					var xds = $("#selXFactR option:selected").val(); 
+					if (xsv.toString().length >= 4) {
+						if (xsv >= objCensusYears.minYear(xds) &&
+							xsv <= objCensusYears.maxYear(xds)) {
+						} else {
+							$( "#anovaRXYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(xds), 10));
+						}
+					}
+				}});
+	$( "#aysXLabelR" ).text(' Years ' + objCensusYears.minYear(xdd) + ' - ' + objCensusYears.maxYear(xdd));
+
+	$( "#anovaRTools" ).draggable({scroll: true, scrollSensitivity: 100, cursor: "crosshair", delay: 100 });
+	
+    if (typeof objCensusAnovaR.getAnovaDataTable() == 'undefined' ||
+        	typeof objCensusAnovaR.getRegrDataTable() == 'undefined') {
+            getAnovaRCensus();
+        } 
+}
+
+function getAnovaRCensus(){
+//        var mimeType = "application/xml";
+//        var mimeType = "text/html";
+        var mimeType = "application/json";
+//      var mimeType = "image/svg+xml";
+        var yd = $( "#anovaRYYearSpinner" ).spinner( "value" );
+        var xd = $( "#anovaRXYearSpinner" ).spinner( "value" );
+        var yv = $( "#selYFactR option:selected" ).val();
+        var xv = $( "#selXFactR option:selected" ).val();
+    	var qs = [jq('yFromDate', yd),jq('yToDate', yd),jq('xFromDate', xd),jq('xToDate', xd),jq('yVar', yv),jq('xVar', xv)];
+    	var es = [je('tabCensusAnovaR',qs)];
+        var ajaxQuery =  'content='+escape($.toJSON(jc('D4V6NeE4',es)));
+        ajaxReq(ajaxQuery, mimeType);
+}
+
+$(document).ajaxSuccess(function(event, xhr, settings) {
+	if (typeof settings.data == 'undefined') {return false;}
+	if (typeof settings.mimeType == 'undefined') {return false;}
+    var query = settings.data;
+    var mimeType = settings.mimeType;
+    if (query.match(/D4V6NeE4/)){
+    	if(mimeType.match(/application\/xml/)){
+        	}
+        if(mimeType.match(/text\/html/)){
+            }
+        if(mimeType.match(/application\/json/)){
+            var jsonAjax = $.parseJSON(xhr.responseText);
+            objCensusAnovaR.setAnovaDataTable(jsonAjax.stats.anova);
+            objCensusAnovaR.setRegrDataTable(jsonAjax.stats.regrdata);
+            objCensusAnovaR.setYFact(jsonAjax.stats.anova.rows[0].c[0].v, jsonAjax.stats.anova.rows[0].c[2].v);
+            objCensusAnovaR.setXFact(jsonAjax.stats.anova.rows[0].c[1].v, jsonAjax.stats.anova.rows[0].c[3].v);
+            objCensusAnovaR.setYFactYear(jsonAjax.stats.anova.rows[0].c[5].v);
+            objCensusAnovaR.setXFactYear(jsonAjax.stats.anova.rows[0].c[6].v);
+			objCensusAnovaR.drawAnova('anovaRSum');
+			objCensusAnovaR.drawScatter('anovaRFitChart_div');
+            objCensusAnovaR.drawTabData('anovaRTblChart_div');
+            }
+        if(mimeType.match(/image\/svg\+xml/)){
+        }
+    }
+});
+
+function syncYANOVAR(){
+	var yr = $( "#anovaRYYearSpinner" ).spinner( "value" );
+	var ds = $("#selYFactR option:selected").val();
+	$( "#anovaRYYearSpinner" ).spinner("option", "max", parseInt(objCensusYears.maxYear(ds), 10));
+	$( "#anovaRYYearSpinner" ).spinner("option", "min", parseInt(objCensusYears.minYear(ds), 10));
+	if (yr >= objCensusYears.minYear(ds) &&
+		yr <= objCensusYears.maxYear(ds)) {
+	} else {
+		$( "#anovaRYYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(ds), 10));
+	}
+	$( "#aysYLabelR" ).text(' Years ' + objCensusYears.minYear(ds) + ' - ' + objCensusYears.maxYear(ds));
+}
+
+function syncXANOVAR(){
+	var yr = $( "#anovaRXYearSpinner" ).spinner( "value" );
+	var ds = $("#selXFactR option:selected").val();
+	$( "#anovaRXYearSpinner" ).spinner("option", "max", parseInt(objCensusYears.maxYear(ds), 10));
+	$( "#anovaRXYearSpinner" ).spinner("option", "min", parseInt(objCensusYears.minYear(ds), 10));
+	if (yr >= objCensusYears.minYear(ds) &&
+		yr <= objCensusYears.maxYear(ds)) {
+	} else {
+		$( "#anovaRXYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(ds), 10));
+	}
+	$( "#aysXLabelR" ).text(' Years ' + objCensusYears.minYear(ds) + ' - ' + objCensusYears.maxYear(ds));
+}
+
+function selectAnovaR() {
+	var yy = $( "#anovaRYYearSpinner" ).spinner( "value" );
+	var xy = $( "#anovaRXYearSpinner" ).spinner( "value" );
+    var yv = $( "#selYFactR option:selected" ).val();
+    var xv = $( "#selXFactR option:selected" ).val();
+    var yl = $( "#selYFactR option:selected" ).text();
+    var xl = $( "#selXFactR option:selected" ).text();
+    if (objCensusAnovaR.hasYearYX(yy, xy, yv, xv)){
+        objCensusAnovaR.setYFactYear(yy);
+        objCensusAnovaR.setXFactYear(xy);
+        objCensusAnovaR.setYFact(yv, yl);
+        objCensusAnovaR.setXFact(xv, xl);
+		objCensusAnovaR.drawAnova('anovaRSum');
+		objCensusAnovaR.drawScatter('anovaRFitChart_div');
+        objCensusAnovaR.drawTabData('anovaRTblChart_div');
+    } else {
+        getAnovaRCensus();     
+    }
+}
+</script>
+<div style="height: 100%; width: 775px">
+<p class='factitle'>
+<h1><span id='anovaRTabTitle'>Analysis Of Variance</span></h1>
+</p>
+<hr>
+<p>
+<h3>Examine the corrolation between dependent and independent variables.</h3>
+</p>
+<hr>
+<p>
+<a href="#" onclick="$( '#anovaRTools' ).css('left','0px');$( '#anovaRTools' ).css('top','0px');return false;">
+<img src='images/revButt_EEEEEE.png' alt='Return' title='Return Controls' style="position: absolute; left: 770px"/></a>
+<div id='anovaRTools' class='cToolBox' style='width: 375px; height: 200px;' title='Drag Me!'>
+<div class='cTBoxBar'>
+<span class="title">Controls</span>
+<a href="#" onclick="$( '#anovaRTools' ).css('left','0px');$( '#anovaRTools' ).css('top','0px');return false;">
+<img src='images/revButt_000066.png' alt='Return Controls' title='Return Controls' style="position: absolute; left: 350px"/></a>
+</div>
+<div class='content'>
+<p>
+<label for='selYFactR' class='tbControl'>Dependent Y</label>
+<label id='aysYLabelR' for='anovaRYYearSpinner' class='tbControl' style="FONT-SIZE: 1em"></label>
+<input id='anovaRYYearSpinner' class='tbControl'></input>
+<select ID="selYFactR" onchange="syncSelect('selYFactR', 'selXFactR');syncYANOVAR();return false;" class='tbControl'>
+  <option value="popestimate" selected="selected">Population</option>
+  <option value="npopchg" disabled>Net Population Change</option>
+  <option value="natchg">Net Natural Change</option>
+  <option value="births">Births</option>
+  <option value="deaths">Deaths</option>
+  <option value="netmig">Net Migration Change</option>
+  <option value="intmig">International Migration</option>
+  <option value="dommig">Domestic Migration</option>
+  <option value="rnpopchg">Population Rate of Change</option>
+  <option value="rnatchg">Natural Rate of Change</option>
+  <option value="rbirth">Birth Rate</option>
+  <option value="rdeath">Mortality Rate</option>
+  <option value="rnetmig">Net Migration Rate</option>
+  <option value="rintmig">International Migration Rate</option>
+  <option value="rdommig">Domestic Migration Rate</option>
+</select> 
+</p>
+<p>
+<label for='selXFactR' class='tbControl'>Independent X</label>
+<label id='aysXLabelR' for='anovaRXYearSpinner' class='tbControl'></label>
+<input id='anovaRXYearSpinner' class='tbControl'></input>
+<select ID="selXFactR" onchange="syncSelect('selYFactR', 'selXFactR');syncXANOVAR();return false;" class='tbControl'>
+  <option value="popestimate" disabled>Population</option>
+  <option value="npopchg" selected="selected">Net Population Change</option>
+  <option value="natchg">Net Natural Change</option>
+  <option value="births">Births</option>
+  <option value="deaths">Deaths</option>
+  <option value="netmig">Net Migration Change</option>
+  <option value="intmig">International Migration</option>
+  <option value="dommig">Domestic Migration</option>
+  <option value="rnpopchg">Population Rate of Change</option>
+  <option value="rnatchg">Natural Rate of Change</option>
+  <option value="rbirth">Birth Rate</option>
+  <option value="rdeath">Mortality Rate</option>
+  <option value="rnetmig">Net Migration Rate</option>
+  <option value="rintmig">International Migration Rate</option>
+  <option value="rdommig">Domestic Migration Rate</option>
+</select> 
+</p>
+<p>
+<input type="button" onclick="selectAnovaR()" value="ANOVA" class="cButt"/>
+</p>
+</div>
+</div>
+</p>
+<div class='cTBar'>
+<span class="anovaRSum_div title">Regression Statistics</span>
+<a href="#" onclick="minMaxButt('anovaRSum_div');return false;">
+<img class="anovaRSum_div butt" src='images/minButt.png'  style="position: absolute; left: 770px"/></a>
+</div>
+<div class='anovaRSum_div hide'>
+<article id='anovaRSum' class='factart'>
+<p>
+<ul class='cLabelList'>
+<li>Dependent Y Variable: <span class='yvarR ffact'></span></li>
+<li>Independent X Variable: <span class='xvarR ffact'></span></li>
+</ul>
+</p>
+<p>
+<div style='padding-left:50px'>
+<table class='cXTab' style='width: 500px'>
+<tr>
+<td class='cXTTopLeft'>Regression</td>
+<td class='cXTColLab'><span>Coefficient</span></td>
+<td class='cXTColLab'><span>Std Error</span></td>
+<td class='cXTColLab'><span>T-Value</span></td>
+<td class='cXTColLab'><span title='Probability of Having Value &gt; T'>P(&gt;T)</span></td>
+</tr>
+<tr>
+<td class='cXTRowLab'><SPAN>Intercept</span></td>
+<td><span class='aR ffact'></span></td>
+<td><span class='aseR ffact'></span></td>
+<td><span class='atvR ffact'></span></td>
+<td><span class='apR ffact'></span></td>
+</tr>
+<tr>
+<td class='cXTRowLab'><SPAN>Slope</span></td>
+<td><span class='bR ffact'></span></td>
+<td><span class='bseR ffact'></span></td>
+<td><span class='btvR ffact'></span></td>
+<td><span class='bpR ffact'></span></td>
+<td></td>
+</tr>
+</table>
+</div>
+</p>
+<p>
+<ul class='cLabelList'>
+<li>Multiple R: <span class='rsqR ffact'></span></li>
+<li>Adjusted R: <span class='arsqR ffact'></span></li>
+<li>Standard Error of Estimate: <span class='seeR ffact'></span></li>
+<li>Observations: <span class='nR ffact'></span></li>
+</ul>
+</p>
+<p>
+<div style='padding-left:50px'>
+<table class='cXTab' style='width: 600px'>
+<tr>
+<td class='cXTTopLeft'>ANOVA</td>
+<td class='cXTColLab'><SPAN title='Degrees of Freedom'>DF</span></td>
+<td class='cXTColLab'><SPAN title='Sum of Squares'>SS</span></td>
+<td class='cXTColLab'><SPAN title='Mean Sum of Squares'>MSS</span></td>
+<td class='cXTColLab'><SPAN title='F-Statistic'>F</span></td>
+<td class='cXTColLab'><SPAN title='Probability of Having Value &gt; F'>P(&gt;F)</span></td>
+<td class='cXTColLab'><SPAN title='Significance Level'>Signif</span></td>
+</tr>
+<tr>
+<td class='cXTRowLab'><SPAN title='Explained Variation'>Regression</span></td>
+<td><span class='dfrR ffact'></span></td>
+<td><span class='rssR ffact'></span></td>
+<td><span class='mrssR ffact'></span></td>
+<td><span class='fR ffact'></span></td>
+<td><span class='pR ffact'></span></td>
+<td><span class='sgnfR ffact'></span></td>
+</tr>
+<tr>
+<td class='cXTRowLab'><SPAN title='Unexplained Variation'>Residual</span></td>
+<td><span class='dfeR ffact'></span></td>
+<td><span class='sseR ffact'></span></td>
+<td><span class='msseR ffact'></span></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<!--tr>
+<td class='cXTRowLab'><SPAN title='Total Variation'>Total</span></td>
+<td><span class='dftR ffact'></span></td>
+<td><span class='tssR ffact'></span></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr-->
+</table>
+</div>
+</p>
+</article>
+</div>
+<div class='cTBar'>
+<span class="anovaRFitChart_div title"></span>
+<a href="#" onclick="minMaxButt('anovaRFitChart_div');objCensusAnovaR.drawScatter('anovaRFitChart_div');return false;">
+<img class="anovaRFitChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='anovaRFitChart_div hide'>
+    <div id="anovaRFitChart_div" class="cIG" style="height: 500px; width: 750px"></div>
+</div>
+<div class='cTBar'>
+<span class="anovaRTblChart_div title"></span>
+<a href="#" onclick="minMaxButt('anovaRTblChart_div');objCensusAnovaRVisual.drawTabData('anovaRTblChart_div');return false;">
+<img class="anovaRTblChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='anovaRTblChart_div hide'>
+    <div id="anovaRTblChart_div" class="cIG" style="height: 500px; width: 750px"></div>
+</div>
+</div>
+
+

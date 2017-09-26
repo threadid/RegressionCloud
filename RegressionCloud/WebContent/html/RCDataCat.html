@@ -1,0 +1,74 @@
+<script type="text/javascript" src="ScriptLibrary/dataCatalogue.js"></script>
+<script type="text/javascript">
+
+var objDataCat = classDataCat();
+
+$('#dataCatTabs').on("tabsactivate", function( event, ui ) {
+	if (ui.newPanel.attr('id')==='tabRCDataCat'){
+    	if (typeof objDataCat.getSeriesTable() === 'undefined') {
+                initTabDataCat();
+     	}   
+    }
+} );
+
+function initTabDataCat(){
+	
+	if (typeof objDataCat.getSeriesTable() === 'undefined') {
+    	getDataSeries();
+    	} 
+}
+
+function getDataSeries(){
+//      var mimeType = "application/xml";
+//      var mimeType = "text/html";
+        var mimeType = "application/json";
+//      var mimeType = "image/svg+xml";
+    	var qs = [jq('', '')];
+    	var es = [je('tabRCDataCat',qs)];
+        var ajaxQuery =  'content='+escape($.toJSON(jc('DfYfZ6Q1',es)));
+        ajaxReq(ajaxQuery, mimeType);
+}
+
+$(document).ajaxSuccess(function(event, xhr, settings) {
+	if (typeof settings.data == 'undefined') {return false;}
+	if (typeof settings.mimeType == 'undefined') {return false;}
+	var query = settings.data;
+    var mimeType = settings.mimeType;
+    if (query.match(/DfYfZ6Q1/) && query.match(/tabRCDataCat/)){
+    	if(mimeType.match(/application\/xml/)){
+        	}
+        if(mimeType.match(/text\/html/)){
+            }
+        if(mimeType.match(/application\/json/)){
+            var jsonData = $.parseJSON(xhr.responseText);
+            objDataCat.setSeriesTable(jsonData.catalogue.series);
+            objDataCat.setSourceTable(jsonData.catalogue.source);
+            if (typeof objDataCat.getSourceTable() == "undefined") {console.log("undefined");}
+            console.log(jsonData.catalogue.source);
+            objDataCat.setSourceNoteTable(jsonData.catalogue.sourcenote);
+            objDataCat.setSourceURITable(jsonData.catalogue.sourceuri);
+            objDataCat.setProviderTable(jsonData.catalogue.provider);
+            objDataCat.setSeriesKeyTable(jsonData.catalogue.serieskey);
+            objDataCat.setSeriesValueTable(jsonData.catalogue.seriesvalue);
+            objDataCat.setSeriesNoteTable(jsonData.catalogue.seriesnote);
+            objDataCat.setSeriesSourceTable(jsonData.catalogue.seriessource);
+            objDataCat.getSeries();
+            }
+        if(mimeType.match(/image\/svg\+xml/)){
+           }
+    }
+});
+
+</script>
+<div style="height: 100%; width: 775px">
+<div id="divSeries" class="cSeries">
+</div>
+<div id="divSource" class="cSource">
+</div>
+<div id='divListSeries'>
+</div>
+</div>
+
+
+
+

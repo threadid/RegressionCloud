@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context crossContext="true" reloadable="true" debug="1">
+	<Resource name="jdbc/postgres" auth="Container"
+		type="javax.sql.DataSource"
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://instancename.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com:5432/instancename"
+		username="username"
+		password="username"
+		/>
+</Context>

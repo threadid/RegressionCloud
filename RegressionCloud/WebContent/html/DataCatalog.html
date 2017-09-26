@@ -1,0 +1,23 @@
+<script type="text/javascript" src="ScriptLibrary/blog.js"></script>
+<script>
+$(document).ajaxSuccess(function(event, xhr, settings) {
+    var query = settings.data;
+    var mimeType = settings.mimeType;
+    var path = settings.url;
+    if (query.match(/Dac8Oekf/) && query.match(/DataCatalog\.html/)){
+    	if(mimeType.match(/application\/xml/)){
+        	}
+        if(mimeType.match(/text\/html/)){
+        	$('#blogpost').html(xhr.responseText);
+        	seoURIReplace(path,{});
+            }
+        if(mimeType.match(/application\/json/)){
+            }
+        if(mimeType.match(/image\/svg\+xml/)){
+	        }
+    }
+});
+</script>
+<hr>
+<div id="blogpost" class="blogpost">
+</div>

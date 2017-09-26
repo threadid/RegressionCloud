@@ -1,0 +1,207 @@
+<script type="text/javascript" src="ScriptLibrary/CensusPop.js"></script>
+<script type="text/javascript">
+
+var objCensusPopVisual = classDrawVisual();
+var objCensusPopSummary = classPopSummary();
+
+$('#censusTabs').on("tabsactivate", function( event, ui ) {
+	if (ui.newPanel.attr('id')==='tabCensusPop'){
+    	if (typeof objCensusPopVisual.getPopDataTable() === 'undefined') {
+	        initTabCensusPop();
+    	}
+    }
+} );
+
+function initTabCensusPop(){
+	var pys = $( "#popYearSpinner" ).spinner();	
+	pys.spinner({ icons: { down: "ui-icon-triangle-1-s", up: "ui-icon-triangle-1-n" } });
+	pys.spinner("option", "step", 1);
+	pys.spinner("option", "max", parseInt(objCensusYears.maxYear('popestimate'), 10));
+	pys.spinner("option", "min", parseInt(objCensusYears.minYear('popestimate'), 10));
+	pys.spinner("value", parseInt(objCensusYears.maxYear('popestimate'), 10));
+	pys.spinner({stop: function( event, ui ) 
+				{	var sv = $( "#popYearSpinner" ).spinner("value");
+					var ds = "popestimate"; 
+					if (sv.toString().length >= 4) {
+						if (sv >= objCensusYears.minYear('popestimate') &&
+							sv <= objCensusYears.maxYear('popestimate')) {
+						} else {
+				        	$( "#popYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear('popestimate'), 10));
+						}
+						selectYearPop();
+					}
+				}});
+	
+	$( "#pysLabel" ).text('Census Years ' + objCensusYears.minYear('popestimate') + ' - ' + objCensusYears.maxYear('popestimate'));
+
+	$( "#popTools" ).draggable({scroll: true, scrollSensitivity: 100, cursor: "crosshair", delay: 100 });
+	
+	if (typeof objCensusPopVisual.getPopDataTable() === 'undefined') {
+    	getPopImgs();
+    	} 
+}
+
+function getPopImgs(){
+    var mimeType = "image/svg+xml";
+    var qs = [jq('Resource', 'Blank_US_Map_With_Labels_Simple_Data.svg')];
+    var es = [je('popUSMap_div',qs)];
+    var ajaxQuery =  'content='+escape($.toJSON(jc('mfldZeM0',es)));
+	ajaxReq(ajaxQuery, mimeType);
+}
+
+function getPopCensus(){
+//        var mimeType = "application/xml";
+//        var mimeType = "text/html";
+	var mimeType = "application/json";
+//      var mimeType = "image/svg+xml";
+	var cd = $( "#popYearSpinner" ).spinner( "value" );
+	var fd = cd;
+	var td = cd;
+
+	var qs = [jq('FromDate', fd),jq('ToDate', td)];
+	var es = [je('tabCensusPop',qs)];
+    var ajaxQuery =  'content='+escape($.toJSON(jc('mfldZeM0',es)));
+	ajaxReq(ajaxQuery, mimeType);
+}
+
+$(document).ajaxSuccess(function(event, xhr, settings) {
+	if (typeof settings.data == 'undefined') {return false;}
+	if (typeof settings.mimeType == 'undefined') {return false;}
+    var query = settings.data;
+    var mimeType = settings.mimeType;
+    if (query.match(/mfldZeM0/)){
+    	if(mimeType.match(/application\/xml/)){
+        	}
+        if(mimeType.match(/text\/html/)){
+            }
+        if(mimeType.match(/application\/json/)){
+            var jsonChartData = $.parseJSON(xhr.responseText);
+            objCensusPopVisual.setPopDataTable(jsonChartData);
+            objCensusPopVisual.setPopFact('popestimate');
+            objCensusPopVisual.setPopFactYear(jsonChartData.rows[0].c[2].v);
+            objCensusPopSummary.getSummary(
+					objCensusPopVisual.getPopDataTable(),
+					'popestimate',					
+					objCensusPopVisual.getPopFactLabel(),					
+					objCensusPopVisual.getPopFactCol(),					
+					objCensusPopVisual.getPopFactYear());
+			objCensusPopSummary.drawSummary('popSum');
+			objCensusPopVisual.PaintMapUS('popUSMap_div');
+            objCensusPopVisual.drawCombChart('popColChart_div');
+            objCensusPopVisual.drawHistogram('popHistColChart_div', 21);
+            objCensusPopVisual.drawParamTab('popParamTblChart_div');
+            objCensusPopVisual.drawTabData('popTblChart_div');
+            }
+        if(mimeType.match(/image\/svg\+xml/)){
+        	var xmlSVG = xhr.responseXML;
+        	objCensusPopVisual.inLineSVG('popUSMap_div', xmlSVG)
+        	getPopCensus();
+        }
+    }
+});
+
+function selectYearPop() {
+	var yr = $( "#popYearSpinner" ).spinner( "value" );
+	if (objCensusPopVisual.hasYear(yr)){
+        objCensusPopVisual.setPopFactYear(yr);
+		objCensusPopSummary.getSummary(
+				objCensusPopVisual.getPopDataTable(),
+				'popestimate',					
+				objCensusPopVisual.getPopFactLabel(),					
+				objCensusPopVisual.getPopFactCol(),					
+				objCensusPopVisual.getPopFactYear());
+		objCensusPopSummary.drawSummary('popSum');
+        objCensusPopVisual.PaintMapUS('popUSMap_div');
+        objCensusPopVisual.drawCombChart('popColChart_div');
+        objCensusPopVisual.drawHistogram('popHistColChart_div', 21);
+        objCensusPopVisual.drawParamTab('popParamTblChart_div');
+        objCensusPopVisual.drawTabData('popTblChart_div');
+    } else {
+        getPopCensus();     
+    }
+}
+
+</script>
+<div style="height: 100%; width: 775px">
+<p>
+<h1><span id='popTabTitle'>Population for The United States <span class='factYear'></span></span></h1>
+</p>
+<hr>
+<p>
+<h3>
+The following maps and charts visualize the distribution of the population of the United States.  The data is based on an estimate of the population of the United States by the US Census Bureau.  The majority of the population of the United States lives in a very few states.
+</h3>
+</p>
+<hr>
+<p>
+<a href="#" onclick="$( '#popTools' ).css('left','0px');$( '#popTools' ).css('top','0px');return false;">
+<img src='images/revButt_EEEEEE.png' alt='Return' title='Return Controls' style="position: absolute; left: 770px"/></a>
+<div id='popTools' class='cToolBox' style='width: 300px; height: 60px;' title='Drag Me!'>
+<div class='cTBoxBar'>
+<span class="title">Controls</span>
+<a href="#" onclick="$( '#popTools' ).css('left','0px');$( '#popTools' ).css('top','0px');return false;">
+<img src='images/revButt_000066.png' alt='Return Control' title='Return Controls' style="position: absolute; left: 275px"/></a>
+</div>
+<div class='content'>
+<label id='pysLabel' for='popYearSpinner' class='tbControl'></label>
+<input id='popYearSpinner' class='tbControl'></input>
+</div>
+</div>
+</p>
+<div class='cTBar'>
+<span class="popSum_div title">Observations about the Population of the United States </span>
+<a href="#" onclick="minMaxButt('popSum_div');return false;">
+<img class="popSum_div butt" src='images/minButt.png'  style="position: absolute; left: 770px"/></a>
+</div>
+<div class='popSum_div hide'>
+<article id='popSum' class='factart'>
+<p>
+<ul class='cList'>
+<li><span class='factYear ffact'></span> Estimated population of the United States: <span class='fsum ffact'></span></li>
+<li>Most Populous State: <span class='fmaxst ffact'></span>, <span class='fmax ffact'></span></li>
+<li>Least Populous State: <span class='fminst ffact'></span>, <span class='fmin ffact'></span></li>
+<li>Median Population: <span class='fmed ffact'></span></li>
+<li>Mean Population: <span class='fmean ffact'></span></li>
+<li><span class='f20w ffact'></span> (approximately one fifth) of the population of the United States or <span class='f20v ffact'></span> people resides in the top <span class='f20c ffact'></span> states: (<span class='f20 ffact'></span>)</li>
+<li><span class='f33w ffact'></span> (approximately one third) of the population of the United States or <span class='f33v ffact'></span> people resides in the top <span class='f33c ffact'></span> states: (<span class='f33 ffact'></span>)</li>
+<li><span class='f50w ffact'></span> (approximately one half) of the population of the United States or <span class='f50v ffact'></span> people resides in the top <span class='f50c ffact'></span> states: (<span class='f50 ffact'></span>)</li>
+<li><span class='fmedw ffact'></span> of the population of the United States or <span class='fmedv ffact'></span> people resides in the top <span class='fmedc ffact'></span> states (above the median)</li>
+<li>That leaves <span class='fmedw- ffact'></span> of the population of the United States or <span class='fmedv- ffact'></span> people residing in the remaining <span class='fmedc- ffact'></span> states</li>
+</ul>
+</p>
+</article>
+</div>
+<div class='cTBar'>
+<span class="popUSMap_div title"></span>
+<a href="#" onclick="minMaxButt('popUSMap_div');objCensusPopVisual.PaintMapUS('popUSMap_div');return false;">
+<img class="popUSMap_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='popUSMap_div hide'>
+    <div id="popUSMap_div" class="cIG" style="height: 500px; width: 750px"></div>
+</div>
+<div class='cTBar'>
+<span class="popColChart_div title" style="text-align:right"></span>
+<a href="#" onclick="minMaxButt('popColChart_div');objCensusPopVisual.drawCombChart('popColChart_div');return false;">
+<img class="popColChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='popColChart_div hide'>
+    <div id="popColChart_div" class="cIG" style="height: 500px; width: 750px"></div>
+</div>
+<div class='cTBar'>
+<span class="popHistColChart_div title"></span>
+<a href="#" onclick="minMaxButt('popHistColChart_div');objCensusPopVisual.drawHistogram('popHistColChart_div', 21);objCensusPopVisual.drawParamTab('popParamTblChart_div');return false;">
+<img class="popHistColChart_div popParamTblChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='popHistColChart_div popParamTblChart_div hide' style="height: 300px; width: 750px">
+    <div id="popHistColChart_div" class="cIG" style="height: 100%; width: 430px; float: left"></div>
+    <div id="popParamTblChart_div" class="cIG" style="height: 100%; width: 300px; float: left; margin-left: 10px"></div>
+</div>
+<div class='cTBar'>
+<span class="popTblChart_div title"></span>
+<a href="#" onclick="minMaxButt('popTblChart_div');objCensusPopVisual.drawTabData('popTblChart_div');return false;">
+<img class="popTblChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='popTblChart_div hide'>
+    <div id="popTblChart_div" class="cIG" style="height: 500px; width: 750px">popHistTblChrt_div</div>
+</div>
+</div>

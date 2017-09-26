@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:web="http://java.sun.com/xml/ns/javaee" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>RegressionCloud</display-name>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <context-param>
+    <param-name>dataService</param-name>
+    <param-value>postgres</param-value>
+  </context-param>
+  <servlet>
+    <servlet-name>index</servlet-name>
+    <jsp-file>/index.jsp</jsp-file>
+  </servlet>
+    <servlet>
+  	<servlet-name>ajaxGetHTML</servlet-name>
+  	<jsp-file>/jsp/ajaxGetHTML.jsp</jsp-file>
+  	<load-on-startup> 4 </load-on-startup>
+  </servlet>
+  <servlet>
+  	<servlet-name>ajaxGetJSON</servlet-name>
+  	<jsp-file>/jsp/ajaxGetJSON.jsp</jsp-file>
+  	<load-on-startup> 4 </load-on-startup>
+  </servlet>
+  <servlet>
+  	<servlet-name>ajaxGetSVG</servlet-name>
+  	<jsp-file>/jsp/ajaxGetSVG.jsp</jsp-file>
+  	<load-on-startup> 4 </load-on-startup>
+  </servlet>
+  <servlet>
+  	<servlet-name>ajaxGetXML</servlet-name>
+  	<jsp-file>/jsp/ajaxGetXML.jsp</jsp-file>
+  	<load-on-startup> 4 </load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>index</servlet-name>
+    <url-pattern>/index.jsp</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ajaxGetHTML</servlet-name>
+  	<url-pattern>/ajaxGetHTML.jsp</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ajaxGetJSON</servlet-name>
+  	<url-pattern>/ajaxGetJSON.jsp</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ajaxGetSVG</servlet-name>
+  	<url-pattern>/ajaxGetSVG.jsp</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ajaxGetXML</servlet-name>
+  	<url-pattern>/ajaxGetXML.jsp</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ajaxGetHTML</servlet-name>
+    <url-pattern>/blog/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ajaxGetHTML</servlet-name>
+    <url-pattern>/home/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ajaxGetHTML</servlet-name>
+    <url-pattern>/analysis/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ajaxGetHTML</servlet-name>
+    <url-pattern>/visual/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ajaxGetHTML</servlet-name>
+    <url-pattern>/tech/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ajaxGetHTML</servlet-name>
+    <url-pattern>/terms/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ajaxGetHTML</servlet-name>
+    <url-pattern>/data/*</url-pattern>
+  </servlet-mapping>
+</web-app>

@@ -1,0 +1,230 @@
+<script type="text/javascript" src="ScriptLibrary/CensusRate.js"></script>
+<script type="text/javascript">
+
+var objCensusRateVisual = classDrawVisual();
+var objCensusRateSummary = classRateSummary();
+
+$('#censusTabs').on("tabsactivate", function( event, ui ) {
+	if (ui.newPanel.attr('id')==='tabCensusRate'){
+    	if (typeof objCensusRateVisual.getPopDataTable() === 'undefined') {
+                initTabCensusRate();
+     	}   
+    }
+} );
+
+function initTabCensusRate(){
+	var dd = $("#selRateFact option:selected").val(); 
+	var pys = $( "#rateYearSpinner" ).spinner();	
+	pys.spinner({ icons: { down: "ui-icon-triangle-1-s", up: "ui-icon-triangle-1-n" } });
+	pys.spinner("option", "step", 1);
+	pys.spinner("option", "max", parseInt(objCensusYears.maxYear(dd), 10));
+	pys.spinner("option", "min", parseInt(objCensusYears.minYear(dd), 10));
+	pys.spinner("value", parseInt(objCensusYears.maxYear(dd), 10));
+	pys.spinner({stop: function( event, ui ) 
+				{	var sv = $( "#rateYearSpinner" ).spinner("value");
+					var ds = $("#selRateFact option:selected").val();
+					if (sv.toString().length >= 4) {
+						if (sv >= objCensusYears.minYear(ds) &&
+							sv <= objCensusYears.maxYear(ds)) {
+						} else {
+							 $( "#rateYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(ds), 10));
+						}
+						selectViewRate();
+					}
+				}});
+	
+	$( "#rysLabel" ).text('Census Years ' + objCensusYears.minYear(dd) + ' - ' + objCensusYears.maxYear(dd));
+
+	$( "#rateTools" ).draggable({scroll: true, scrollSensitivity: 100, cursor: "crosshair", delay: 100 });
+	
+	if (typeof objCensusRateVisual.getPopDataTable() === 'undefined') {
+    	getRateImgs();
+    	} 
+}
+
+function getRateImgs(){
+    var mimeType = "image/svg+xml";
+    var qs = [jq('Resource', 'Blank_US_Map_With_Labels_Simple_Data.svg')];
+    var es = [je('rateUSMap_div',qs)];
+    var ajaxQuery =  'content='+escape($.toJSON(jc('m4MdZ8U0',es)));
+	ajaxReq(ajaxQuery, mimeType);
+}
+
+function getRateCensus(){
+//      var mimeType = "application/xml";
+//      var mimeType = "text/html";
+        var mimeType = "application/json";
+//      var mimeType = "image/svg+xml";
+        var cd = $( "#rateYearSpinner" ).spinner( "value" );
+        var fd = cd;
+        var td = cd;
+    	var qs = [jq('FromDate', fd),jq('ToDate', td)];
+    	var es = [je('tabCensusRate',qs)];
+        var ajaxQuery =  'content='+escape($.toJSON(jc('m4MdZ8U0',es)));
+        ajaxReq(ajaxQuery, mimeType);
+}
+
+$(document).ajaxSuccess(function(event, xhr, settings) {
+	if (typeof settings.data == 'undefined') {return false;}
+	if (typeof settings.mimeType == 'undefined') {return false;}
+	var query = settings.data;
+    var mimeType = settings.mimeType;
+    if (query.match(/m4MdZ8U0/)){
+    	if(mimeType.match(/application\/xml/)){
+        	}
+        if(mimeType.match(/text\/html/)){
+            }
+        if(mimeType.match(/application\/json/)){
+            var jsonChartData = $.parseJSON(xhr.responseText);
+            objCensusRateVisual.setPopDataTable(jsonChartData);
+            objCensusRateVisual.setPopFact($( "#selRateFact" ).val());
+            objCensusRateVisual.setPopFactYear($( "#rateYearSpinner" ).spinner( "value" ).toString());
+    		objCensusRateSummary.getSummary(
+    				objCensusRateVisual.getPopDataTable(),
+    				objCensusRateVisual.getPopFact(),					
+					objCensusRateVisual.getPopFactLabel(),					
+    				objCensusRateVisual.getPopFactCol(),					
+    				objCensusRateVisual.getPopFactYear());
+    		objCensusRateSummary.drawSummary('rateSum');
+            objCensusRateVisual.PaintMapUS('rateUSMap_div');
+            objCensusRateVisual.drawDistChart('rateColChart_div');
+            objCensusRateVisual.drawHistogram('rateHistColChart_div', 21);
+            objCensusRateVisual.drawParamTab('rateParamTblChart_div');
+            objCensusRateVisual.drawTabData('rateTblChart_div');
+            }
+        if(mimeType.match(/image\/svg\+xml/)){
+        	var xmlSVG = xhr.responseXML;
+            objCensusRateVisual.inLineSVG('rateUSMap_div', xmlSVG)
+        	getRateCensus();
+           }
+    }
+});
+
+function syncRate(){
+	var yr = $( "#rateYearSpinner" ).spinner( "value" );
+	var ds = $("#selRateFact option:selected").val();
+	$( "#rateYearSpinner" ).spinner("option", "max", parseInt(objCensusYears.maxYear(ds), 10));
+	$( "#rateYearSpinner" ).spinner("option", "min", parseInt(objCensusYears.minYear(ds), 10));
+	if (yr >= objCensusYears.minYear(ds) &&
+		yr <= objCensusYears.maxYear(ds)) {
+	} else {
+		$( "#rateYearSpinner" ).spinner("value", parseInt(objCensusYears.maxYear(ds), 10));
+	}
+	$( "#rysLabel" ).text('Census Years ' + objCensusYears.minYear(ds) + ' - ' + objCensusYears.maxYear(ds));
+	selectViewRate();
+}
+
+function selectViewRate() {
+	var yr = $( "#rateYearSpinner" ).spinner( "value" );
+	var ds = $("#selRateFact option:selected").val();
+    if (objCensusRateVisual.hasYear(yr)){
+    	objCensusRateVisual.setPopFactYear(yr);
+    	objCensusRateVisual.setPopFact(ds);
+		objCensusRateSummary.getSummary(
+				objCensusRateVisual.getPopDataTable(),
+				objCensusRateVisual.getPopFact(),					
+				objCensusRateVisual.getPopFactLabel(),					
+				objCensusRateVisual.getPopFactCol(),					
+				objCensusRateVisual.getPopFactYear());
+		objCensusRateSummary.drawSummary('rateSum');
+        objCensusRateVisual.PaintMapUS('rateUSMap_div');
+        objCensusRateVisual.drawDistChart('rateColChart_div');
+        objCensusRateVisual.drawHistogram('rateHistColChart_div', 21);
+        objCensusRateVisual.drawParamTab('rateParamTblChart_div');
+        objCensusRateVisual.drawTabData('rateTblChart_div');
+    } else {
+        getRateCensus();     
+    }
+}
+
+</script>
+<div style="height: 100%; width: 775px">
+<p>
+<h1><span id='rateTabTitle'><span class='factName'></span> for The United States - <span class='factYear'></span></span></h1>
+</p>
+<hr>
+<p>
+<h3>
+Rate of change tends to be more normally distributed compared to the absolute levels which tends to be right skewed because of autocorrelation with the size of the base population.
+</h3>
+</p>
+<hr>
+<p>
+<a href="#" onclick="$( '#rateTools' ).css('left','0px');$( '#rateTools' ).css('top','0px');return false;">
+<img src='images/revButt_EEEEEE.png' alt='Return' title='Return Controls' style="position: absolute; left: 770px"/></a>
+<div id='rateTools' class='cToolBox' style='width: 300px; height: 120px;' title='Drag Me!'>
+<div class='cTBoxBar'>
+<span class="title">Controls</span>
+<a href="#" onclick="$( '#rateTools' ).css('left','0px');$( '#rateTools' ).css('top','0px');return false;">
+<img src='images/revButt_000066.png' alt='Return Control' title='Return Controls' style="position: absolute; left: 275px"/></a>
+</div>
+<div class='content'>
+<label id='rysLabel' for='rateYearSpinner' class='tbControl'></label>
+<input id='rateYearSpinner' class='tbControl'></input>
+<p>
+<select ID="selRateFact" onchange="syncRate();return false;" class='tbControl'>
+  <option value="rnpopchg" selected="selected">Population Rate of Change</option>
+  <option value="rnatchg">Natural Rate of Change</option>
+  <option value="rbirth">Birth Rate</option>
+  <option value="rdeath">Mortality Rate</option>
+  <option value="rnetmig">Net Migration Rate</option>
+  <option value="rintmig">International Migration Rate</option>
+  <option value="rdommig">Domestic Migration Rate</option>
+</select> 
+</p>
+</div>
+</div>
+</p>
+<div class='cTBar'>
+<span class="rateSum_div title">Observations about <span class='factName'></span> for the United States <span class='factYear'></span></span>
+<a href="#" onclick="minMaxButt('rateSum_div');return false;">
+<img class="rateSum_div butt" src='images/minButt.png'  style="position: absolute; left: 770px"/></a>
+</div>
+<div class='rateSum_div hide'>
+<article id='rateSum' class='factart'>
+<p>
+<ul class='cList'>
+<li><span class='factName'></span> for the United States: <span class='fsum ffact'></span></li>
+<li>State with the <span class='fmaxdesc'></span> <span class='factName'></span>: <span class='fmaxst ffact'></span>, <span class='fmax ffact'></span></li>
+<li>State with the <span class='fmindesc'></span> <span class='factName'></span>: <span class='fminst ffact'></span>, <span class='fmin ffact'></span></li>
+<li>Median <span class='factName'></span>: <span class='fmed ffact'></span></li>
+<li>Mean <span class='factName'></span>: <span class='fmean ffact'></span></li>
+</ul>
+</p>
+</article>
+</div>
+<div class='cTBar'>
+<span class="rateUSMap_div title"></span>
+<a href="#" onclick="minMaxButt('rateUSMap_div');objCensusRateVisual.PaintMapUS('rateUSMap_div');return false;">
+<img class="rateUSMap_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='rateUSMap_div hide'>
+    <div id="rateUSMap_div" class="cIG" style="height: 500px; width: 750px"></div>
+</div>
+<div class='cTBar'>
+<span class="rateColChart_div title" style="text-align:right"></span>
+<a href="#" onclick="minMaxButt('rateColChart_div');objCensusRateVisual.drawDistChart('rateColChart_div');return false;">
+<img class="rateColChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='rateColChart_div hide'>
+    <div id="rateColChart_div" class="cIG" style="height: 400px; width: 750px"></div>
+</div>
+<div class='cTBar'>
+<span class="rateHistColChart_div title"></span>
+<a href="#" onclick="minMaxButt('rateHistColChart_div');objCensusRateVisual.drawHistogram('rateHistColChart_div', 21);objCensusRateVisual.drawParamTab('rateParamTblChart_div');return false;">
+<img class="rateHistColChart_div rateParamTblChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='rateHistColChart_div rateParamTblChart_div hide' style="height: 300px; width: 750px">
+    <div id="rateHistColChart_div" class="cIG"  style="height: 100%; width: 430px; float: left"></div>
+    <div id="rateParamTblChart_div" class="cIG" style="height: 100%; width: 300px; float: left; margin-left: 10px"></div>
+</div>
+<div class='cTBar'>
+<span class="rateTblChart_div title"></span>
+<a href="#" onclick="minMaxButt('rateTblChart_div');objCensusRateVisual.drawTabData('rateTblChart_div');return false;">
+<img class="rateTblChart_div butt" src='images/minButt.png' align="right"/></a>
+</div>
+<div class='rateTblChart_div hide'>
+    <div id="rateTblChart_div" class="cIG" style="height: 300px; width: 750px;"></div>
+</div>
+</div>
+
